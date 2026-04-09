@@ -218,6 +218,7 @@
         linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
       background-size: 80px 80px;
     }
+    /* Single hero glasses image — right side, centered vertically */
     .hero-eyeglass-deco {
       position: absolute;
       top: 50%; right: 5%;
@@ -227,7 +228,16 @@
     }
     .hero-eyeglass-deco img {
       width: 100%;
-      filter: drop-shadow(0 0 60px rgba(201,168,76,0.15));
+      filter: drop-shadow(0 0 80px rgba(201,168,76,0.2)) drop-shadow(0 20px 60px rgba(10,22,40,0.8));
+      border-radius: 2px;
+    }
+    /* Subtle gold glow behind the image */
+    .hero-eyeglass-deco::before {
+      content: '';
+      position: absolute;
+      inset: -10%;
+      background: radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
     }
     .hero-content { position: relative; z-index: 2; max-width: 750px; }
     .hero-eyebrow {
@@ -342,54 +352,32 @@
       margin: 1.5rem 0;
     }
 
-    /* ── ABOUT SECTION ── */
+    /* ── ABOUT SECTION — text only ── */
     #about {
       background: #0D1E3A;
       padding: 10rem 4rem;
     }
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6rem;
-      align-items: center;
+    .about-inner {
       max-width: 1400px;
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 8rem;
+      align-items: start;
     }
-    .about-image-wrap {
-      position: relative;
+    .about-left {}
+    .about-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(250,247,240,0.7);
     }
-    .about-image-wrap img {
-      width: 100%;
-      aspect-ratio: 3/4;
-      object-fit: cover;
-      filter: grayscale(80%);
-      transition: filter 0.6s ease;
-    }
-    .about-image-wrap:hover img { filter: grayscale(0%); }
-    .about-image-wrap::before {
-      content: '';
-      position: absolute;
-      top: -20px; left: -20px;
-      right: 20px; bottom: 20px;
-      border: 1px solid rgba(201,168,76,0.2);
-      z-index: -1;
-      pointer-events: none;
-    }
-    .about-image-wrap::after {
-      content: '"CALIDAD"';
-      position: absolute;
-      bottom: -1.5rem; right: -1.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: rgba(201,168,76,0.5);
-      letter-spacing: 0.3em;
-    }
+    .about-body p + p { margin-top: 1.25rem; }
     .about-stat-row {
       display: flex;
       gap: 3rem;
       margin-top: 3rem;
     }
-    .about-stat { }
     .about-stat-num {
       font-family: 'Playfair Display', serif;
       font-size: 3rem;
@@ -404,15 +392,65 @@
       letter-spacing: 0.05em;
       margin-top: 0.25rem;
     }
-    .about-body {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1.05rem;
-      line-height: 1.8;
-      color: rgba(250,247,240,0.7);
+    /* Decorative quote block on right */
+    .about-quote {
+      border-left: 2px solid rgba(201,168,76,0.3);
+      padding-left: 2.5rem;
     }
-    .about-body p + p { margin-top: 1.25rem; }
+    .about-quote-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-style: italic;
+      line-height: 1.3;
+      color: rgba(250,247,240,0.85);
+      margin-bottom: 1.5rem;
+    }
+    .about-quote-text em { color: #C9A84C; font-style: normal; }
+    .about-quote-attr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(201,168,76,0.5);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .about-values {
+      margin-top: 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .about-value-item {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(201,168,76,0.08);
+    }
+    .about-value-item:first-child { border-top: 1px solid rgba(201,168,76,0.08); }
+    .about-value-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(201,168,76,0.4);
+      letter-spacing: 0.2em;
+      min-width: 2.5rem;
+    }
+    .about-value-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: rgba(250,247,240,0.6);
+      flex: 1;
+    }
+    .about-value-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: #C9A84C;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 0.2rem 0.6rem;
+    }
 
-    /* ── COLLECTIONS ── */
+    /* ── COLLECTIONS — text-based cards ── */
     #collections {
       background: #0A1628;
       padding: 10rem 4rem;
@@ -424,106 +462,98 @@
       justify-content: space-between;
       align-items: flex-end;
     }
-    .collection-grid {
+    .collection-cards {
       max-width: 1400px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.5px;
+      gap: 2px;
     }
-    .collection-item {
+    .collection-card {
+      background: #112040;
+      padding: 3.5rem 2.5rem;
       position: relative;
       overflow: hidden;
-      background: #112040;
+      transition: background 0.4s;
+      cursor: default;
     }
-    .collection-item:first-child {
-      grid-row: span 2;
-    }
-    .collection-item img {
-      width: 100%;
-      height: 100%;
-      min-height: 320px;
-      object-fit: cover;
-      filter: grayscale(70%);
-      transition: filter 0.6s ease, transform 0.6s ease;
-    }
-    .collection-item:hover img {
-      filter: grayscale(0%);
-      transform: scale(1.04);
-    }
-    .collection-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(10,22,40,0.85) 0%, transparent 50%);
-      opacity: 0;
-      transition: opacity 0.4s;
-    }
-    .collection-item:hover .collection-overlay { opacity: 1; }
-    .collection-label {
+    .collection-card::before {
+      content: '';
       position: absolute;
-      bottom: 1.5rem; left: 1.5rem;
-      z-index: 2;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.4s, transform 0.4s;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: #C9A84C;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
     }
-    .collection-item:hover .collection-label { opacity: 1; transform: translateY(0); }
-    .collection-label-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: #FAF7F0;
-    }
-    .collection-label-code {
+    .collection-card:hover { background: #162B52; }
+    .collection-card:hover::before { transform: scaleX(1); }
+    .collection-card-eyebrow {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: #C9A84C;
+      font-size: 0.6rem;
+      color: rgba(201,168,76,0.5);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .collection-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #FAF7F0;
+      margin-bottom: 0.75rem;
+      line-height: 1.15;
+    }
+    .collection-card-name em { color: #C9A84C; font-style: italic; }
+    .collection-card-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: rgba(250,247,240,0.5);
+      line-height: 1.75;
+      margin-bottom: 2.5rem;
+    }
+    .collection-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .collection-card-count {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: rgba(201,168,76,0.15);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .collection-card-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(201,168,76,0.6);
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      margin-top: 0.2rem;
+      border: 1px solid rgba(201,168,76,0.2);
+      padding: 0.3rem 0.8rem;
+      transition: border-color 0.3s, color 0.3s;
     }
-    /* video panel */
-    .collection-video-panel {
-      position: relative;
-      overflow: hidden;
-      background: #0D1E3A;
+    .collection-card:hover .collection-card-tag {
+      border-color: rgba(201,168,76,0.6);
+      color: #C9A84C;
     }
-    .collection-video-panel video {
-      width: 100%;
-      height: 100%;
-      min-height: 320px;
-      object-fit: cover;
-      opacity: 0.85;
-    }
-    .collection-video-panel:hover video { opacity: 1; }
-
-    /* ── VIDEO SECTION ── */
-    #video-section {
-      background: #060E1D;
-      padding: 10rem 4rem;
-    }
-    .video-container {
-      max-width: 1400px;
-      margin: 0 auto;
+    /* Featured/wide card spanning full width */
+    .collection-card-featured {
+      grid-column: span 3;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6rem;
+      grid-template-columns: 1fr auto;
       align-items: center;
+      gap: 4rem;
+      padding: 3rem 2.5rem;
     }
-    .video-wrapper {
-      position: relative;
-      overflow: hidden;
+    .collection-card-featured .collection-card-name { font-size: 2.4rem; }
+    .collection-featured-right {
+      text-align: right;
     }
-    .video-wrapper video {
-      width: 100%;
-      aspect-ratio: 9/16;
-      object-fit: cover;
-      display: block;
-    }
-    .video-wrapper::before {
-      content: '';
-      position: absolute; inset: 0;
-      border: 1px solid rgba(201,168,76,0.15);
-      z-index: 1;
-      pointer-events: none;
+    .collection-featured-right .collection-card-count {
+      font-size: 5rem;
+      color: rgba(201,168,76,0.1);
     }
 
     /* ── SERVICES ── */
@@ -753,22 +783,21 @@
     .anim-fade-up { opacity: 0; transform: translateY(50px); }
     .anim-fade-left { opacity: 0; transform: translateX(-50px); }
     .anim-fade-right { opacity: 0; transform: translateX(50px); }
-    .anim-scale-in { opacity: 0; transform: scale(0.9); }
+    .anim-scale-in { opacity: 0; transform: scale(0.95); }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
       nav { padding: 1.5rem 2rem; }
       nav.scrolled { padding: 1rem 2rem; }
       #hero { padding: 0 2rem 5rem; }
-      #about, #collections, #video-section, #services, #cta { padding: 7rem 2rem; }
+      #about, #collections, #services, #cta { padding: 7rem 2rem; }
       #why-vop .why-items-right { padding: 6rem 2rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 4rem; }
-      .collection-grid { grid-template-columns: 1fr 1fr; }
-      .collection-item:first-child { grid-row: span 1; }
+      .about-inner { grid-template-columns: 1fr; gap: 4rem; }
+      .collection-cards { grid-template-columns: 1fr 1fr; }
+      .collection-card-featured { grid-column: span 2; }
       .services-grid { grid-template-columns: 1fr 1fr; }
       .why-sticky-wrap { grid-template-columns: 1fr; }
       .why-sticky-left { position: relative; height: auto; padding: 5rem 2rem; }
-      .video-container { grid-template-columns: 1fr; gap: 3rem; }
       footer { padding: 4rem 2rem 2rem; }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
       .hero-eyeglass-deco { display: none; }
@@ -777,7 +806,8 @@
     }
     @media (max-width: 640px) {
       .services-grid { grid-template-columns: 1fr; }
-      .collection-grid { grid-template-columns: 1fr; }
+      .collection-cards { grid-template-columns: 1fr; }
+      .collection-card-featured { grid-column: span 1; grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
       #cta { padding: 6rem 2rem; }
     }
@@ -821,14 +851,14 @@
     <a href="#cta" class="nav-cta">Consulta Gratis</a>
   </nav>
 
-  <!-- HERO -->
+  <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
   <section id="hero">
     <div id="hero-bg"></div>
     <div class="hero-grid-lines"></div>
 
-    <!-- Decorative frame image -->
+    <!-- Single premium glasses image — hero focal point -->
     <div class="hero-eyeglass-deco" id="heroDeco">
-      <img src="assets/images/frames-silver.jpg" alt="Montura premium VoP" />
+      <img src="assets/images/frames-silver.jpg" alt="Montura premium VoP — Cat-Eye Plateado" />
     </div>
 
     <div class="hero-content">
@@ -852,12 +882,10 @@
     </div>
   </section>
 
-  <!-- ABOUT -->
+  <!-- ═══════════════════════════ ABOUT ═══════════════════════════ -->
   <section id="about">
-    <div class="about-grid">
-      <div class="about-image-wrap anim-fade-left">
-        <img src="assets/images/brand.jpg" alt="Óptica VoP — calidad y estilo" loading="lazy" />
-      </div>
+    <div class="about-inner">
+      <!-- Left: Heading + body + stats -->
       <div>
         <p class="section-eyebrow anim-fade-up">01 — Quiénes Somos</p>
         <h2 class="section-title anim-fade-up">Expertos en<br><em>estilo visual</em></h2>
@@ -881,10 +909,40 @@
           </div>
         </div>
       </div>
+
+      <!-- Right: Editorial quote + values list -->
+      <div class="anim-fade-right">
+        <div class="about-quote">
+          <p class="about-quote-text">"No seguimos tendencias — <em>las definimos</em>."</p>
+          <p class="about-quote-attr">— Filosofía VoP</p>
+        </div>
+        <div class="about-values anim-fade-up">
+          <div class="about-value-item">
+            <span class="about-value-num">01</span>
+            <span class="about-value-name">Curaduría editorial exigente</span>
+            <span class="about-value-tag">Estilo</span>
+          </div>
+          <div class="about-value-item">
+            <span class="about-value-num">02</span>
+            <span class="about-value-name">Materiales de primera calidad</span>
+            <span class="about-value-tag">Calidad</span>
+          </div>
+          <div class="about-value-item">
+            <span class="about-value-num">03</span>
+            <span class="about-value-name">Ajuste personalizado por expertos</span>
+            <span class="about-value-tag">Precisión</span>
+          </div>
+          <div class="about-value-item">
+            <span class="about-value-num">04</span>
+            <span class="about-value-name">Experiencia de servicio premium</span>
+            <span class="about-value-tag">Lujo</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- COLLECTIONS -->
+  <!-- ═══════════════════════════ COLLECTIONS ═══════════════════════════ -->
   <section id="collections">
     <div class="collections-header">
       <div>
@@ -895,71 +953,58 @@
         <a href="#cta" class="btn-ghost">Ver catálogo completo</a>
       </div>
     </div>
-    <div class="collection-grid">
-      <div class="collection-item anim-scale-in">
-        <img src="assets/images/frames-silver.jpg" alt="Colección Cat-Eye Silver" loading="lazy" />
-        <div class="collection-overlay"></div>
-        <div class="collection-label">
-          <div class="collection-label-name">Cat-Eye Plateado</div>
-          <div class="collection-label-code">VOP-SE — Clásica</div>
+
+    <div class="collection-cards">
+      <!-- Card 1 -->
+      <div class="collection-card anim-scale-in">
+        <div class="collection-card-eyebrow">VOP-SE — Clásica</div>
+        <h3 class="collection-card-name">Cat-Eye<br><em>Plateado</em></h3>
+        <p class="collection-card-desc">Líneas afiladas, acabado espejo y estructura metálica ultraligera. Para quienes llevan la elegancia como segunda naturaleza.</p>
+        <div class="collection-card-meta">
+          <span class="collection-card-count">48</span>
+          <span class="collection-card-tag">Ver estilos</span>
         </div>
       </div>
-      <div class="collection-item anim-scale-in">
-        <img src="assets/images/frames-rose.jpg" alt="Colección Mariposa Rosé" loading="lazy" />
-        <div class="collection-overlay"></div>
-        <div class="collection-label">
-          <div class="collection-label-name">Mariposa Rosé</div>
-          <div class="collection-label-code">VOP-BF — Premium</div>
+      <!-- Card 2 -->
+      <div class="collection-card anim-scale-in">
+        <div class="collection-card-eyebrow">VOP-BF — Premium</div>
+        <h3 class="collection-card-name">Mariposa<br><em>Rosé</em></h3>
+        <p class="collection-card-desc">Acetato italiano en tonos rosados y durazno. Una colección femenina que no pide permiso para destacar.</p>
+        <div class="collection-card-meta">
+          <span class="collection-card-count">36</span>
+          <span class="collection-card-tag">Ver estilos</span>
         </div>
       </div>
-      <div class="collection-video-panel anim-scale-in">
-        <video autoplay muted loop playsinline>
-          <source src="assets/videos/showcase.mp4" type="video/mp4" />
-        </video>
-        <div class="collection-overlay"></div>
-        <div class="collection-label" style="opacity:1; transform:none;">
-          <div class="collection-label-name">Colección Completa</div>
-          <div class="collection-label-code">Nuevos arrivals 2025</div>
+      <!-- Card 3 -->
+      <div class="collection-card anim-scale-in">
+        <div class="collection-card-eyebrow">VOP-BL — Tecnología</div>
+        <h3 class="collection-card-name">Blue Light<br><em>Shield</em></h3>
+        <p class="collection-card-desc">Lentes anti luz azul con marcos minimalistas. Diseñados para las horas frente a pantallas sin sacrificar el estilo.</p>
+        <div class="collection-card-meta">
+          <span class="collection-card-count">24</span>
+          <span class="collection-card-tag">Ver estilos</span>
         </div>
       </div>
-      <div class="collection-item anim-scale-in">
-        <img src="assets/images/brand.jpg" alt="Calidad VoP" loading="lazy" />
-        <div class="collection-overlay"></div>
-        <div class="collection-label">
-          <div class="collection-label-name">Blue Light Shield</div>
-          <div class="collection-label-code">VOP-BL — Tecnología</div>
+      <!-- Featured wide card -->
+      <div class="collection-card collection-card-featured anim-fade-up">
+        <div>
+          <div class="collection-card-eyebrow">VOP-25 — Nuevos Arrivals</div>
+          <h3 class="collection-card-name">Colección <em>2025</em></h3>
+          <p class="collection-card-desc" style="max-width:540px;">Lo mejor del año: piezas seleccionadas de los principales diseñadores europeos y asiáticos. Renovación semanal — hay siempre algo nuevo para descubrir.</p>
+        </div>
+        <div class="collection-featured-right">
+          <div class="collection-card-count">120+</div>
+          <div style="margin-top:0.5rem;"><span class="collection-card-tag">Explorar →</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- VIDEO SECTION -->
-  <section id="video-section">
-    <div class="video-container">
-      <div>
-        <p class="section-eyebrow anim-fade-up">03 — En Movimiento</p>
-        <h2 class="section-title anim-fade-up">Las monturas que<br><em>hablan</em> por ti</h2>
-        <div class="divider anim-fade-up"></div>
-        <p class="about-body anim-fade-up" style="max-width:440px;">
-          Cada detalle importa. Desde el peso del armazón hasta el brillo del acabado — las monturas VoP están diseñadas para ser notadas.
-        </p>
-        <div style="margin-top:2rem;" class="anim-fade-up">
-          <a href="#cta" class="btn-primary">Agendar Consulta</a>
-        </div>
-      </div>
-      <div class="video-wrapper anim-fade-right">
-        <video autoplay muted loop playsinline>
-          <source src="assets/videos/frames.mp4" type="video/mp4" />
-        </video>
-      </div>
-    </div>
-  </section>
-
-  <!-- SERVICES -->
+  <!-- ═══════════════════════════ SERVICES ═══════════════════════════ -->
   <section id="services">
     <div class="services-container">
       <div style="max-width:600px; margin-bottom:0;">
-        <p class="section-eyebrow anim-fade-up">04 — Servicios</p>
+        <p class="section-eyebrow anim-fade-up">03 — Servicios</p>
         <h2 class="section-title anim-fade-up">Óptica de<br><em>alto nivel</em></h2>
       </div>
       <div class="services-grid">
@@ -1008,11 +1053,11 @@
     </div>
   </section>
 
-  <!-- WHY VOP (Sticky Scroll) -->
+  <!-- ═══════════════════════════ WHY VOP ═══════════════════════════ -->
   <section id="why-vop">
     <div class="why-sticky-wrap">
       <div class="why-sticky-left">
-        <p class="section-eyebrow anim-fade-up">05 — Por Qué VoP</p>
+        <p class="section-eyebrow anim-fade-up">04 — Por Qué VoP</p>
         <h2 class="section-title anim-fade-up">Más que<br>una óptica —<br>una <em>visión</em></h2>
         <div class="divider anim-fade-up"></div>
         <p style="font-family:'DM Sans',sans-serif;font-size:0.9rem;color:rgba(250,247,240,0.5);line-height:1.8;margin-top:1rem;max-width:380px;" class="anim-fade-up">
@@ -1039,9 +1084,9 @@
     </div>
   </section>
 
-  <!-- CTA -->
+  <!-- ═══════════════════════════ CTA ═══════════════════════════ -->
   <section id="cta">
-    <p class="section-eyebrow anim-fade-up">06 — Empieza Hoy</p>
+    <p class="section-eyebrow anim-fade-up">05 — Empieza Hoy</p>
     <h2 class="section-title anim-fade-up">Tu imagen,<br><em>elevada</em></h2>
     <p class="cta-subtitle anim-fade-up">Agenda una consulta sin costo y descubre qué montura fue hecha para ti. O explora nuestra colección online — nueva selección cada semana.</p>
     <div class="cta-actions anim-fade-up">
@@ -1050,13 +1095,13 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
   <footer>
     <div class="footer-grid">
       <div>
         <div class="footer-brand-name">Óptica VoP</div>
         <div class="footer-tagline">Monturas en Tendencia</div>
-        <p class="footer-desc">Óptica premium en Santo Domingo, República Dominicana. Curadoria de monturas para quienes no negocian su imagen.</p>
+        <p class="footer-desc">Óptica premium en Santo Domingo, República Dominicana. Curaduría de monturas para quienes no negocian su imagen.</p>
       </div>
       <div>
         <div class="footer-col-title">Navegación</div>
@@ -1217,6 +1262,12 @@
       scrollTrigger: { trigger: '.services-grid', start: 'top 80%', once: true }
     });
 
+    // Collection cards stagger
+    gsap.from('.collection-card', {
+      y: 40, opacity: 0, duration: 0.7, stagger: 0.1, ease: 'power3.out',
+      scrollTrigger: { trigger: '.collection-cards', start: 'top 80%', once: true }
+    });
+
     // Why VoP items counter animation
     gsap.from('.why-item-num', {
       opacity: 0, y: 20, duration: 0.6, stagger: 0.2, ease: 'power2.out',
@@ -1237,6 +1288,12 @@
           scrollTrigger: { trigger: el, start: 'top 85%', once: true }
         });
       }
+    });
+
+    // About values stagger
+    gsap.from('.about-value-item', {
+      x: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out',
+      scrollTrigger: { trigger: '.about-values', start: 'top 85%', once: true }
     });
 
     // CTA section color flash
