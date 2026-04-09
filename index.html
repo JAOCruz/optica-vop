@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Óptica VoP — Monturas en Tendencia</title>
+  <meta name="description" content="Óptica VoP — monturas premium para quienes exigen estilo sin compromisos. República Dominicana." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
+
+  <!-- Lenis -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#0A1628',
+            'navy-mid': '#112040',
+            'navy-light': '#1A2F5A',
+            gold: '#C9A84C',
+            'gold-light': '#E8C96A',
+            'gold-pale': '#F5E9C8',
+            cream: '#FAF7F0',
+            charcoal: '#1C1C1C',
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', 'serif'],
+            body: ['"DM Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0A1628;
+      color: #FAF7F0;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    #cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: #C9A84C;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .2s, height .2s, background .2s;
+      mix-blend-mode: normal;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 44px; height: 44px;
+      border: 1.5px solid rgba(201,168,76,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width .3s, height .3s, border-color .3s;
+    }
+    body:has(a:hover) #cursor,
+    body:has(button:hover) #cursor { width: 20px; height: 20px; background: #E8C96A; }
+    body:has(a:hover) #cursor-ring,
+    body:has(button:hover) #cursor-ring { width: 64px; height: 64px; border-color: rgba(201,168,76,0.9); }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed; inset: 0;
+      background: #0A1628;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .preloader-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(3rem, 8vw, 6rem);
+      color: #C9A84C;
+      letter-spacing: 0.15em;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .preloader-eye {
+      width: 60px; height: 60px;
+      opacity: 0;
+    }
+    .preloader-bar-wrap {
+      width: 200px; height: 2px;
+      background: rgba(201,168,76,0.2);
+      overflow: hidden;
+      border-radius: 2px;
+    }
+    .preloader-bar {
+      height: 100%;
+      background: #C9A84C;
+      width: 0%;
+      border-radius: 2px;
+    }
+    .preloader-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(201,168,76,0.6);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    .noise::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 1.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      mix-blend-mode: normal;
+      transition: background 0.4s, padding 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(10, 22, 40, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #C9A84C;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-logo svg { width: 28px; height: 28px; }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: rgba(250,247,240,0.7);
+      text-decoration: none;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: #C9A84C; }
+    .nav-cta {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #0A1628;
+      background: #C9A84C;
+      padding: 0.6rem 1.5rem;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: background 0.3s;
+    }
+    .nav-cta:hover { background: #E8C96A; }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 4rem 6rem;
+      overflow: hidden;
+    }
+    #hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, #0A1628 0%, #1A2F5A 50%, #0D2144 100%);
+    }
+    .hero-grid-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+    .hero-eyeglass-deco {
+      position: absolute;
+      top: 50%; right: 5%;
+      transform: translateY(-50%);
+      width: 45vw; max-width: 700px;
+      opacity: 0;
+    }
+    .hero-eyeglass-deco img {
+      width: 100%;
+      filter: drop-shadow(0 0 60px rgba(201,168,76,0.15));
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 750px; }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #C9A84C;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      line-height: 1.0;
+      color: #FAF7F0;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title .gold { color: #C9A84C; font-style: italic; }
+    .hero-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      font-size: 1.15rem;
+      color: rgba(250,247,240,0.65);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      opacity: 0;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      opacity: 0;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      color: #0A1628;
+      background: #C9A84C;
+      padding: 1rem 2.5rem;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #E8C96A; transform: translateY(-2px); }
+    .btn-ghost {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(250,247,240,0.7);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(250,247,240,0.2);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .btn-ghost:hover { color: #C9A84C; border-color: #C9A84C; }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2.5rem; right: 4rem;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+    }
+    .hero-scroll-hint span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(250,247,240,0.4);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      writing-mode: vertical-lr;
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, rgba(201,168,76,0.6), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* ── SECTION BASE ── */
+    section { position: relative; }
+    .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: #C9A84C;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1.1;
+      color: #FAF7F0;
+    }
+    .section-title em { color: #C9A84C; font-style: italic; }
+    .divider {
+      width: 60px; height: 2px;
+      background: #C9A84C;
+      margin: 1.5rem 0;
+    }
+
+    /* ── ABOUT SECTION ── */
+    #about {
+      background: #0D1E3A;
+      padding: 10rem 4rem;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .about-image-wrap {
+      position: relative;
+    }
+    .about-image-wrap img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      filter: grayscale(80%);
+      transition: filter 0.6s ease;
+    }
+    .about-image-wrap:hover img { filter: grayscale(0%); }
+    .about-image-wrap::before {
+      content: '';
+      position: absolute;
+      top: -20px; left: -20px;
+      right: 20px; bottom: 20px;
+      border: 1px solid rgba(201,168,76,0.2);
+      z-index: -1;
+      pointer-events: none;
+    }
+    .about-image-wrap::after {
+      content: '"CALIDAD"';
+      position: absolute;
+      bottom: -1.5rem; right: -1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(201,168,76,0.5);
+      letter-spacing: 0.3em;
+    }
+    .about-stat-row {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+    }
+    .about-stat { }
+    .about-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #C9A84C;
+      line-height: 1;
+    }
+    .about-stat-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: rgba(250,247,240,0.5);
+      letter-spacing: 0.05em;
+      margin-top: 0.25rem;
+    }
+    .about-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(250,247,240,0.7);
+    }
+    .about-body p + p { margin-top: 1.25rem; }
+
+    /* ── COLLECTIONS ── */
+    #collections {
+      background: #0A1628;
+      padding: 10rem 4rem;
+    }
+    .collections-header {
+      max-width: 1400px;
+      margin: 0 auto 5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .collection-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+    .collection-item {
+      position: relative;
+      overflow: hidden;
+      background: #112040;
+    }
+    .collection-item:first-child {
+      grid-row: span 2;
+    }
+    .collection-item img {
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+      object-fit: cover;
+      filter: grayscale(70%);
+      transition: filter 0.6s ease, transform 0.6s ease;
+    }
+    .collection-item:hover img {
+      filter: grayscale(0%);
+      transform: scale(1.04);
+    }
+    .collection-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,22,40,0.85) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .collection-item:hover .collection-overlay { opacity: 1; }
+    .collection-label {
+      position: absolute;
+      bottom: 1.5rem; left: 1.5rem;
+      z-index: 2;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .collection-item:hover .collection-label { opacity: 1; transform: translateY(0); }
+    .collection-label-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #FAF7F0;
+    }
+    .collection-label-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: #C9A84C;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+    /* video panel */
+    .collection-video-panel {
+      position: relative;
+      overflow: hidden;
+      background: #0D1E3A;
+    }
+    .collection-video-panel video {
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+      object-fit: cover;
+      opacity: 0.85;
+    }
+    .collection-video-panel:hover video { opacity: 1; }
+
+    /* ── VIDEO SECTION ── */
+    #video-section {
+      background: #060E1D;
+      padding: 10rem 4rem;
+    }
+    .video-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .video-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+    .video-wrapper video {
+      width: 100%;
+      aspect-ratio: 9/16;
+      object-fit: cover;
+      display: block;
+    }
+    .video-wrapper::before {
+      content: '';
+      position: absolute; inset: 0;
+      border: 1px solid rgba(201,168,76,0.15);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ── SERVICES ── */
+    #services {
+      background: #0D1E3A;
+      padding: 10rem 4rem;
+    }
+    .services-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 5rem;
+    }
+    .service-card {
+      background: #112040;
+      padding: 3rem 2.5rem;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .service-card:hover {
+      border-color: #C9A84C;
+      background: #1A2F5A;
+    }
+    .service-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(201,168,76,0.5);
+      letter-spacing: 0.3em;
+      margin-bottom: 2rem;
+    }
+    .service-icon {
+      margin-bottom: 1.5rem;
+    }
+    .service-icon svg {
+      width: 40px; height: 40px;
+      stroke: #C9A84C;
+      fill: none;
+      stroke-width: 1.5;
+    }
+    .service-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: #FAF7F0;
+      margin-bottom: 1rem;
+    }
+    .service-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: rgba(250,247,240,0.55);
+      line-height: 1.75;
+    }
+
+    /* ── WHY VOP (STICKY) ── */
+    #why-vop {
+      background: #0A1628;
+    }
+    .why-sticky-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+    .why-sticky-left {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 4rem;
+      background: #112040;
+    }
+    .why-sticky-left .section-title { font-size: clamp(2.5rem, 4vw, 3.5rem); }
+    .why-items-right {
+      padding: 10rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6rem;
+    }
+    .why-item {}
+    .why-item-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 5rem;
+      font-weight: 400;
+      color: rgba(201,168,76,0.08);
+      line-height: 1;
+      margin-bottom: -1rem;
+    }
+    .why-item-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #C9A84C;
+      margin-bottom: 1rem;
+    }
+    .why-item-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: rgba(250,247,240,0.6);
+      line-height: 1.8;
+      max-width: 480px;
+    }
+
+    /* ── CTA ── */
+    #cta {
+      background: #C9A84C;
+      padding: 10rem 4rem;
+      text-align: center;
+    }
+    #cta .section-eyebrow { color: rgba(10,22,40,0.6); }
+    #cta .section-title { color: #0A1628; }
+    #cta .section-title em { color: #0A1628; font-style: italic; }
+    .cta-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      color: rgba(10,22,40,0.65);
+      max-width: 560px;
+      margin: 1.5rem auto 3rem;
+      line-height: 1.7;
+    }
+    .cta-actions { display: flex; gap: 1.5rem; justify-content: center; }
+    .btn-dark {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      color: #FAF7F0;
+      background: #0A1628;
+      padding: 1rem 2.5rem;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-dark:hover { background: #112040; transform: translateY(-2px); }
+    .btn-outline-dark {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #0A1628;
+      text-decoration: none;
+      border: 1.5px solid #0A1628;
+      padding: 0.95rem 2.5rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    .btn-outline-dark:hover { background: #0A1628; color: #C9A84C; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #060E1D;
+      padding: 5rem 4rem 3rem;
+    }
+    .footer-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+    }
+    .footer-brand-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #C9A84C;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .footer-tagline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(201,168,76,0.4);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .footer-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(250,247,240,0.4);
+      line-height: 1.7;
+    }
+    .footer-col-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(201,168,76,0.5);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-links a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: rgba(250,247,240,0.45);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: #C9A84C; }
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 2rem auto 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(250,247,240,0.2);
+      letter-spacing: 0.1em;
+    }
+    .footer-credit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(201,168,76,0.3);
+      letter-spacing: 0.1em;
+    }
+    .footer-credit a { color: rgba(201,168,76,0.5); text-decoration: none; }
+    .footer-credit a:hover { color: #C9A84C; }
+
+    /* ── ANIMATIONS INITIAL ── */
+    .anim-fade-up { opacity: 0; transform: translateY(50px); }
+    .anim-fade-left { opacity: 0; transform: translateX(-50px); }
+    .anim-fade-right { opacity: 0; transform: translateX(50px); }
+    .anim-scale-in { opacity: 0; transform: scale(0.9); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      nav { padding: 1.5rem 2rem; }
+      nav.scrolled { padding: 1rem 2rem; }
+      #hero { padding: 0 2rem 5rem; }
+      #about, #collections, #video-section, #services, #cta { padding: 7rem 2rem; }
+      #why-vop .why-items-right { padding: 6rem 2rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .collection-grid { grid-template-columns: 1fr 1fr; }
+      .collection-item:first-child { grid-row: span 1; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .why-sticky-wrap { grid-template-columns: 1fr; }
+      .why-sticky-left { position: relative; height: auto; padding: 5rem 2rem; }
+      .video-container { grid-template-columns: 1fr; gap: 3rem; }
+      footer { padding: 4rem 2rem 2rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+      .hero-eyeglass-deco { display: none; }
+      .nav-links { display: none; }
+      .cta-actions { flex-direction: column; align-items: center; }
+    }
+    @media (max-width: 640px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      #cta { padding: 6rem 2rem; }
+    }
+  </style>
+</head>
+
+<body class="noise">
+  <!-- Custom Cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <svg class="preloader-eye" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="30" cy="30" rx="28" ry="18" stroke="#C9A84C" stroke-width="1.5"/>
+      <circle cx="30" cy="30" r="8" fill="#C9A84C"/>
+      <circle cx="30" cy="30" r="4" fill="#0A1628"/>
+      <circle cx="32" cy="28" r="1.5" fill="rgba(201,168,76,0.5)"/>
+    </svg>
+    <div class="preloader-logo">VoP</div>
+    <div class="preloader-bar-wrap"><div class="preloader-bar" id="preloaderBar"></div></div>
+    <div class="preloader-label">Cargando experiencia</div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="mainNav">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="14" cy="14" rx="13" ry="8" stroke="#C9A84C" stroke-width="1.5"/>
+        <circle cx="14" cy="14" r="4" fill="#C9A84C"/>
+        <circle cx="14" cy="14" r="2" fill="#0A1628"/>
+      </svg>
+      VoP
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">Nosotros</a></li>
+      <li><a href="#collections">Colecciones</a></li>
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#why-vop">Por Qué VoP</a></li>
+    </ul>
+    <a href="#cta" class="nav-cta">Consulta Gratis</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div id="hero-bg"></div>
+    <div class="hero-grid-lines"></div>
+
+    <!-- Decorative frame image -->
+    <div class="hero-eyeglass-deco" id="heroDeco">
+      <img src="assets/images/frames-silver.jpg" alt="Montura premium VoP" />
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow" id="heroEyebrow">— Óptica VoP · Santo Domingo, RD</p>
+      <h1 class="hero-title" id="heroTitle">
+        <span class="line">Monturas</span><br>
+        <span class="line">en <em class="gold">Tendencia</em></span>
+      </h1>
+      <p class="hero-subtitle" id="heroSubtitle">
+        Donde cada montura es una declaración. Estilo, precisión óptica y diseño premium — seleccionados para quienes no negocian su imagen.
+      </p>
+      <div class="hero-actions" id="heroActions">
+        <a href="#collections" class="btn-primary">Ver Colecciones</a>
+        <a href="#about" class="btn-ghost">Nuestra historia</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint" id="heroScroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-grid">
+      <div class="about-image-wrap anim-fade-left">
+        <img src="assets/images/brand.jpg" alt="Óptica VoP — calidad y estilo" loading="lazy" />
+      </div>
+      <div>
+        <p class="section-eyebrow anim-fade-up">01 — Quiénes Somos</p>
+        <h2 class="section-title anim-fade-up">Expertos en<br><em>estilo visual</em></h2>
+        <div class="divider anim-fade-up"></div>
+        <div class="about-body anim-fade-up">
+          <p>En Óptica VoP entendemos que las monturas no son solo corrección visual — son parte de tu identidad. Cada pieza en nuestra colección ha sido seleccionada con criterio editorial: materiales superiores, diseños contemporáneos, y ajuste impecable.</p>
+          <p>Desde Santo Domingo, llevamos lo mejor del mercado óptico internacional directo a ti. No vendemos lentes — curadamos tu imagen.</p>
+        </div>
+        <div class="about-stat-row anim-fade-up">
+          <div class="about-stat">
+            <div class="about-stat-num">500+</div>
+            <div class="about-stat-label">Estilos disponibles</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">8+</div>
+            <div class="about-stat-label">Años de experiencia</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">100%</div>
+            <div class="about-stat-label">Satisfacción garantizada</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTIONS -->
+  <section id="collections">
+    <div class="collections-header">
+      <div>
+        <p class="section-eyebrow anim-fade-up">02 — Colecciones</p>
+        <h2 class="section-title anim-fade-up">Cada montura,<br>una <em>obra</em></h2>
+      </div>
+      <div class="anim-fade-up">
+        <a href="#cta" class="btn-ghost">Ver catálogo completo</a>
+      </div>
+    </div>
+    <div class="collection-grid">
+      <div class="collection-item anim-scale-in">
+        <img src="assets/images/frames-silver.jpg" alt="Colección Cat-Eye Silver" loading="lazy" />
+        <div class="collection-overlay"></div>
+        <div class="collection-label">
+          <div class="collection-label-name">Cat-Eye Plateado</div>
+          <div class="collection-label-code">VOP-SE — Clásica</div>
+        </div>
+      </div>
+      <div class="collection-item anim-scale-in">
+        <img src="assets/images/frames-rose.jpg" alt="Colección Mariposa Rosé" loading="lazy" />
+        <div class="collection-overlay"></div>
+        <div class="collection-label">
+          <div class="collection-label-name">Mariposa Rosé</div>
+          <div class="collection-label-code">VOP-BF — Premium</div>
+        </div>
+      </div>
+      <div class="collection-video-panel anim-scale-in">
+        <video autoplay muted loop playsinline>
+          <source src="assets/videos/showcase.mp4" type="video/mp4" />
+        </video>
+        <div class="collection-overlay"></div>
+        <div class="collection-label" style="opacity:1; transform:none;">
+          <div class="collection-label-name">Colección Completa</div>
+          <div class="collection-label-code">Nuevos arrivals 2025</div>
+        </div>
+      </div>
+      <div class="collection-item anim-scale-in">
+        <img src="assets/images/brand.jpg" alt="Calidad VoP" loading="lazy" />
+        <div class="collection-overlay"></div>
+        <div class="collection-label">
+          <div class="collection-label-name">Blue Light Shield</div>
+          <div class="collection-label-code">VOP-BL — Tecnología</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO SECTION -->
+  <section id="video-section">
+    <div class="video-container">
+      <div>
+        <p class="section-eyebrow anim-fade-up">03 — En Movimiento</p>
+        <h2 class="section-title anim-fade-up">Las monturas que<br><em>hablan</em> por ti</h2>
+        <div class="divider anim-fade-up"></div>
+        <p class="about-body anim-fade-up" style="max-width:440px;">
+          Cada detalle importa. Desde el peso del armazón hasta el brillo del acabado — las monturas VoP están diseñadas para ser notadas.
+        </p>
+        <div style="margin-top:2rem;" class="anim-fade-up">
+          <a href="#cta" class="btn-primary">Agendar Consulta</a>
+        </div>
+      </div>
+      <div class="video-wrapper anim-fade-right">
+        <video autoplay muted loop playsinline>
+          <source src="assets/videos/frames.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="services-container">
+      <div style="max-width:600px; margin-bottom:0;">
+        <p class="section-eyebrow anim-fade-up">04 — Servicios</p>
+        <h2 class="section-title anim-fade-up">Óptica de<br><em>alto nivel</em></h2>
+      </div>
+      <div class="services-grid">
+        <!-- Card 1 -->
+        <div class="service-card anim-fade-up">
+          <div class="service-number">01</div>
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40">
+              <path d="M5 20c0-8.3 6.7-15 15-15s15 6.7 15 15-6.7 15-15 15S5 28.3 5 20z"/>
+              <circle cx="20" cy="20" r="5"/>
+              <path d="M5 20h4M31 20h4M20 5v4M20 31v4"/>
+            </svg>
+          </div>
+          <h3 class="service-title">Ajuste de Montura</h3>
+          <p class="service-desc">Cada rostro es único. Nuestro equipo ajusta tu montura con precisión milimétrica para máxima comodidad y estilo.</p>
+        </div>
+        <!-- Card 2 -->
+        <div class="service-card anim-fade-up">
+          <div class="service-number">02</div>
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40">
+              <rect x="6" y="14" width="28" height="12" rx="6"/>
+              <circle cx="14" cy="20" r="4"/>
+              <circle cx="26" cy="20" r="4"/>
+              <path d="M18 20h4"/>
+            </svg>
+          </div>
+          <h3 class="service-title">Opciones de Lentes</h3>
+          <p class="service-desc">Lentes progresivos, bifocales, antireflex, blue light blocking, fotocromáticos — la solución óptica correcta para tu vida.</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="service-card anim-fade-up">
+          <div class="service-number">03</div>
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40">
+              <circle cx="20" cy="13" r="5"/>
+              <path d="M10 34c0-5.5 4.5-10 10-10s10 4.5 10 10"/>
+              <path d="M27 16l3 3-3 3"/>
+              <path d="M13 22l3-3"/>
+            </svg>
+          </div>
+          <h3 class="service-title">Consulta Personalizada</h3>
+          <p class="service-desc">Te ayudamos a encontrar el estilo perfecto según la forma de tu rostro, tu estilo de vida y tus preferencias estéticas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY VOP (Sticky Scroll) -->
+  <section id="why-vop">
+    <div class="why-sticky-wrap">
+      <div class="why-sticky-left">
+        <p class="section-eyebrow anim-fade-up">05 — Por Qué VoP</p>
+        <h2 class="section-title anim-fade-up">Más que<br>una óptica —<br>una <em>visión</em></h2>
+        <div class="divider anim-fade-up"></div>
+        <p style="font-family:'DM Sans',sans-serif;font-size:0.9rem;color:rgba(250,247,240,0.5);line-height:1.8;margin-top:1rem;max-width:380px;" class="anim-fade-up">
+          En VoP no seguimos tendencias — las definimos. Cada montura que entra a nuestro catálogo pasa por un filtro editorial exigente.
+        </p>
+      </div>
+      <div class="why-items-right">
+        <div class="why-item anim-fade-right">
+          <div class="why-item-num">01</div>
+          <h3 class="why-item-title">Curaduría Editorial</h3>
+          <p class="why-item-desc">No tenemos 1,000 productos genéricos. Tenemos 500 piezas seleccionadas con el mismo rigor de una editorial de moda. Cada montura tiene una razón de estar aquí.</p>
+        </div>
+        <div class="why-item anim-fade-right">
+          <div class="why-item-num">02</div>
+          <h3 class="why-item-title">Precisión Técnica</h3>
+          <p class="why-item-desc">Óptica no es solo estilo — es ciencia. Nuestro equipo combina expertise en salud visual con conocimiento de tendencias para darte lo mejor de ambos mundos.</p>
+        </div>
+        <div class="why-item anim-fade-right">
+          <div class="why-item-num">03</div>
+          <h3 class="why-item-title">Experiencia Premium</h3>
+          <p class="why-item-desc">Desde el primer contacto hasta el ajuste final, cada interacción con VoP está diseñada para sentirse como un servicio de lujo accesible en Santo Domingo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <p class="section-eyebrow anim-fade-up">06 — Empieza Hoy</p>
+    <h2 class="section-title anim-fade-up">Tu imagen,<br><em>elevada</em></h2>
+    <p class="cta-subtitle anim-fade-up">Agenda una consulta sin costo y descubre qué montura fue hecha para ti. O explora nuestra colección online — nueva selección cada semana.</p>
+    <div class="cta-actions anim-fade-up">
+      <a href="https://wa.me/18098802016?text=Hola%2C%20me%20interesa%20una%20consulta%20en%20%C3%93ptica%20VoP" target="_blank" class="btn-dark">Consulta por WhatsApp</a>
+      <a href="#collections" class="btn-outline-dark">Ver Colecciones</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">Óptica VoP</div>
+        <div class="footer-tagline">Monturas en Tendencia</div>
+        <p class="footer-desc">Óptica premium en Santo Domingo, República Dominicana. Curadoria de monturas para quienes no negocian su imagen.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navegación</div>
+        <ul class="footer-links">
+          <li><a href="#about">Nosotros</a></li>
+          <li><a href="#collections">Colecciones</a></li>
+          <li><a href="#services">Servicios</a></li>
+          <li><a href="#why-vop">Por Qué VoP</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Servicios</div>
+        <ul class="footer-links">
+          <li><a href="#services">Ajuste de Montura</a></li>
+          <li><a href="#services">Lentes Premium</a></li>
+          <li><a href="#services">Consulta Gratuita</a></li>
+          <li><a href="#cta">Blue Light Blocking</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contacto</div>
+        <ul class="footer-links">
+          <li><a href="https://wa.me/18098802016">WhatsApp</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Santo Domingo, RD</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 Óptica VoP — Todos los derechos reservados</span>
+      <span class="footer-credit">Demo by <a href="#">Arcova</a></span>
+    </div>
+  </footer>
+
+  <script>
+  /* ══════════════════════════════════════════
+     CURSOR
+  ══════════════════════════════════════════ */
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    gsap.to(cursor, { x: mx, y: my, duration: 0.1 });
+  });
+
+  (function ringFollow() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    gsap.set(ring, { x: rx, y: ry });
+    requestAnimationFrame(ringFollow);
+  })();
+
+  /* ══════════════════════════════════════════
+     PRELOADER
+  ══════════════════════════════════════════ */
+  const preloader = document.getElementById('preloader');
+  const bar = document.getElementById('preloaderBar');
+  const tl = gsap.timeline();
+
+  tl.to('.preloader-eye', { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.4)' })
+    .to('.preloader-logo', { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3')
+    .to('.preloader-label', { opacity: 1, duration: 0.4 }, '-=0.2')
+    .to(bar, { width: '100%', duration: 1.2, ease: 'power2.inOut' }, '-=0.2')
+    .to(preloader, {
+      yPercent: -100,
+      duration: 0.8,
+      ease: 'power3.inOut',
+      delay: 0.2,
+      onComplete: () => {
+        preloader.style.display = 'none';
+        initPageAnimations();
+      }
+    });
+
+  /* ══════════════════════════════════════════
+     NAV SCROLL
+  ══════════════════════════════════════════ */
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 80);
+  });
+
+  /* ══════════════════════════════════════════
+     LENIS SMOOTH SCROLL
+  ══════════════════════════════════════════ */
+  let lenis;
+  function initLenis() {
+    lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(time => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  /* ══════════════════════════════════════════
+     PAGE ANIMATIONS
+  ══════════════════════════════════════════ */
+  function initPageAnimations() {
+    gsap.registerPlugin(ScrollTrigger);
+    initLenis();
+
+    // Hero entrance
+    const heroTl = gsap.timeline({ delay: 0.1 });
+    heroTl
+      .to('#heroEyebrow', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+      .from('#heroTitle .line', {
+        y: 80, opacity: 0, duration: 0.9, stagger: 0.12,
+        ease: 'power3.out'
+      }, '-=0.3')
+      .to('#heroSubtitle', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4')
+      .to('#heroActions', { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3')
+      .to('#heroScroll', { opacity: 1, duration: 0.5 }, '-=0.2')
+      .to('#heroDeco', { opacity: 1, x: 0, duration: 1.2, ease: 'power3.out' }, '-=1.2');
+
+    // Hero parallax
+    gsap.to('#heroDeco', {
+      yPercent: -15,
+      ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+    gsap.to('.hero-grid-lines', {
+      yPercent: 8,
+      ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+
+    // Generic scroll reveals
+    document.querySelectorAll('.anim-fade-up').forEach(el => {
+      gsap.to(el, {
+        opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+      });
+    });
+    document.querySelectorAll('.anim-fade-left').forEach(el => {
+      gsap.to(el, {
+        opacity: 1, x: 0, duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+    document.querySelectorAll('.anim-fade-right').forEach(el => {
+      gsap.to(el, {
+        opacity: 1, x: 0, duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+    document.querySelectorAll('.anim-scale-in').forEach((el, i) => {
+      gsap.to(el, {
+        opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out',
+        delay: i * 0.08,
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+      });
+    });
+
+    // Service cards stagger
+    gsap.from('.service-card', {
+      y: 60, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
+      scrollTrigger: { trigger: '.services-grid', start: 'top 80%', once: true }
+    });
+
+    // Why VoP items counter animation
+    gsap.from('.why-item-num', {
+      opacity: 0, y: 20, duration: 0.6, stagger: 0.2, ease: 'power2.out',
+      scrollTrigger: { trigger: '.why-items-right', start: 'top 80%', once: true }
+    });
+
+    // Stat counter animation
+    document.querySelectorAll('.about-stat-num').forEach(el => {
+      const target = parseInt(el.textContent);
+      if (!isNaN(target)) {
+        gsap.from({ val: 0 }, {
+          val: target,
+          duration: 1.5,
+          ease: 'power2.out',
+          onUpdate: function() {
+            el.textContent = Math.round(this.targets()[0].val) + (el.textContent.includes('+') ? '+' : el.textContent.includes('%') ? '%' : '');
+          },
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+        });
+      }
+    });
+
+    // CTA section color flash
+    ScrollTrigger.create({
+      trigger: '#cta',
+      start: 'top 70%',
+      once: true,
+      onEnter: () => {
+        gsap.from('#cta', { scale: 0.98, duration: 0.6, ease: 'back.out(1.4)' });
+      }
+    });
+  }
+  </script>
+</body>
+</html>
